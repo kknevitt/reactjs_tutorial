@@ -14,12 +14,12 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  renderSquare(i, xCoord, yCoord) {
+  renderSquare(i) {
     return(
       <Square
         key={'square' + i}
         value={this.props.squares[i]}
-        onClick={() => this.props.handleSquareClick(i, xCoord, yCoord)}
+        onClick={() => this.props.handleSquareClick(i)}
       />
     );
   }
@@ -57,7 +57,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
-        coords: null
+        position: null
       }],
       xIsNext: true,
       stepNumber: 0
@@ -71,7 +71,7 @@ class Game extends React.Component {
     });
   }
 
-  handleSquareClick = (value, xCoords, yCoords) => {
+  handleSquareClick = (value) => {
     const history = this.state.history.slice(0, this.state.stepNumber + 1)
     const current = history[this.state.stepNumber];
     const squares = [...current.squares];
@@ -82,7 +82,7 @@ class Game extends React.Component {
     
     squares[value] = this.state.xIsNext ? 'X' : 'O';
     this.setState({
-      history: history.concat([{squares: squares, coords: [xCoords, yCoords]}]),
+      history: history.concat([{squares: squares, position: value}]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
@@ -96,7 +96,7 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       const desc = move ?
-        `Go to move #${move} (#${step.coords})` :
+        `Go to move #${move} (#${calculateCoords(step.position)})` :
         'Go to game start';
       return (
         <li key={move}>
@@ -156,4 +156,10 @@ function calculateWinner(squares) {
     }
   }
   return null;
+}
+
+function calculateCoords(position) {
+  const rowNumber = Math.floor(position / 3);
+  const colNumber = position - (3 * rowNumber);
+  return [colNumber, rowNumber]
 }
