@@ -60,7 +60,8 @@ class Game extends React.Component {
         position: null
       }],
       xIsNext: true,
-      stepNumber: 0
+      stepNumber: 0,
+      isHistoryAscending: true
     }
   }
 
@@ -94,14 +95,15 @@ class Game extends React.Component {
     const winner = calculateWinner(current.squares);
     let status;
 
-    const moves = history.map((step, move) => {
-      const desc = move ?
+    const moves = (this.state.isHistoryAscending ? history : [...history].reverse()).map((step, move) => {
+      const relativePosition = this.state.isHistoryAscending ? move : history.length - move - 1
+      const desc = step.position !== null ?
         `Go to move #${move} (#${calculateCoords(step.position)})` :
         'Go to game start';
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>
-            <span className={`${move === this.state.stepNumber ? 'typ--em' : ''}`}>{desc}</span>
+          <button onClick={() => this.jumpTo(relativePosition)}>
+            <span className={`${relativePosition === this.state.stepNumber ? 'typ--em' : ''}`}>{desc}</span>
           </button>
         </li>
       );
@@ -124,6 +126,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button onClick={() => this.setState({isHistoryAscending: !this.state.isHistoryAscending})}></button>
           <ol>{moves}</ol>
         </div>
       </div>
