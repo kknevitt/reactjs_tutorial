@@ -52,3 +52,7 @@ ol, ul {
 .typ--em {
   font-weight: 600;
 }
+
+.square--winner {
+  background-color: green;
+}
